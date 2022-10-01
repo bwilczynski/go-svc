@@ -11,13 +11,15 @@ import (
 	"time"
 
 	h "github.com/bwilczynski/go-svc/http"
+	"github.com/bwilczynski/go-svc/http/admin"
 	"github.com/rs/zerolog"
 )
 
 var (
-	console = flag.Bool("console", false, "Enable pretty logging on console")
-	debug   = flag.Bool("debug", false, "Sets log level to debug")
-	port    = flag.Int("port", 8000, "HTTP port to run server on")
+	console   = flag.Bool("console", false, "Enable pretty logging on console")
+	debug     = flag.Bool("debug", false, "Sets log level to debug")
+	port      = flag.Int("port", 8000, "HTTP port to run server on")
+	adminPort = flag.Int("admin-port", 9000, "HTTP port to run admin server on")
 )
 
 func main() {
@@ -43,12 +45,18 @@ func run() error {
 	}
 	logger.Info().Msg("Application is starting")
 
-	srv := &http.Server{
+	srv, admin := &http.Server{
 		Addr:    fmt.Sprintf(":%d", *port),
 		Handler: h.NewService(logger),
+	}, &http.Server{
+		Addr:    fmt.Sprintf(":%d", *adminPort),
+		Handler: admin.NewService(logger),
 	}
 	go func() {
 		srv.ListenAndServe()
+	}()
+	go func() {
+		admin.ListenAndServe()
 	}()
 
 	done := make(chan os.Signal, 1)
@@ -59,6 +67,7 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	srv.Shutdown(ctx)
+	admin.Shutdown(ctx)
 
 	return nil
 }
