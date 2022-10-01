@@ -1,6 +1,6 @@
 package http
 
-func (r service) routes() {
-	r.mux.Handle("/hello", r.handleHello())
-	r.mux.Handle("/healthz", r.handleHealthz())
+func (svc service) routes() {
+	svc.mux.Handle("/hello", withLogger(svc.logger)(svc.handleHello()))
+	svc.mux.Handle("/healthz", svc.handleHealthz())
 }

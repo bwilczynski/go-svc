@@ -2,14 +2,17 @@ package http
 
 import (
 	"net/http"
+
+	"github.com/rs/zerolog"
 )
 
 type service struct {
-	mux *http.ServeMux
+	mux    *http.ServeMux
+	logger zerolog.Logger
 }
 
-func NewService() *service {
-	svc := &service{mux: http.NewServeMux()}
+func NewService(logger zerolog.Logger) *service {
+	svc := &service{mux: http.NewServeMux(), logger: logger}
 	svc.routes()
 	return svc
 }
