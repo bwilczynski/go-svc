@@ -21,10 +21,6 @@ func (mux *ServeMux) Handle(pattern string, handler http.Handler) {
 	mux.ServeMux.Handle(pattern, contextHandler(handler))
 }
 
-func (mux *ServeMux) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	mux.ServeMux.ServeHTTP(w, req)
-}
-
 func (mux *ServeMux) GetRoutePattern(req *http.Request) string {
 	return req.Context().Value(patternKey{}).(string)
 }
