@@ -22,5 +22,8 @@ func (mux *ServeMux) Handle(pattern string, handler http.Handler) {
 }
 
 func (mux *ServeMux) GetRoutePattern(req *http.Request) string {
-	return req.Context().Value(patternKey{}).(string)
+	if rp := req.Context().Value(patternKey{}); rp != nil {
+		return rp.(string)
+	}
+	return ""
 }
