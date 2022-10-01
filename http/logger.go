@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog/hlog"
 )
 
-func withLogger(logger zerolog.Logger) func(next http.Handler) http.Handler {
+func loggingHandler(logger zerolog.Logger) func(next http.Handler) http.Handler {
 	h := hlog.NewHandler(logger)
 	a := hlog.AccessHandler(func(r *http.Request, status, size int, duration time.Duration) {
 		hlog.FromRequest(r).Info().
