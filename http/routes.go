@@ -1,7 +1,17 @@
 package http
 
-import "github.com/bwilczynski/go-svc/pkg/metrics"
+import (
+	"net/http"
+
+	"github.com/bwilczynski/go-svc/pkg/metrics"
+)
 
 func (svc service) routes() {
-	svc.mux.Handle("/hello", metrics.InstrumentHandler("/hello")(loggingHandler(svc.logger)(svc.helloHandler())))
+	observe := func(next http.Handler) http.Handler {
+		m := metrics.InstrumentHandler(func(r *http.Request) string { return svc.mux.GetRoutePattern(r) })
+		l := loggingHandler(svc.logger)(next)
+		return m(l)
+	}
+	svc.mux.Handle("/hello", observe(svc.helloHandler()))
+	svc.mux.Handle("/", observe(http.NotFoundHandler()))
 }

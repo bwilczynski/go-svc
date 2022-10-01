@@ -45,13 +45,15 @@ func init() {
 	prometheus.MustRegister(inFlightGauge, counter, duration, responseSize)
 }
 
-func InstrumentHandler(url string) func(next http.Handler) http.Handler {
+func InstrumentHandler(urlFunc func(r *http.Request) string) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return promhttp.InstrumentHandlerInFlight(inFlightGauge,
-			promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels{"url": url}),
-				promhttp.InstrumentHandlerCounter(counter, promhttp.InstrumentHandlerResponseSize(responseSize, next)),
-			),
-		)
+		i1 := promhttp.InstrumentHandlerResponseSize(responseSize, next)
+		i2 := promhttp.InstrumentHandlerCounter(counter, i1)
+		i3 := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			promhttp.InstrumentHandlerDuration(
+				duration.MustCurryWith(prometheus.Labels{"url": urlFunc(r)}), i2)(w, r)
+		})
+		return promhttp.InstrumentHandlerInFlight(inFlightGauge, i3)
 	}
 }
 
