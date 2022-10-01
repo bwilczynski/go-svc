@@ -3,6 +3,8 @@ package metrics
 import (
 	"net/http"
 
+	httpe "github.com/bwilczynski/go-svc/pkg/http"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -45,16 +47,25 @@ func init() {
 	prometheus.MustRegister(inFlightGauge, counter, duration, responseSize)
 }
 
-func InstrumentHandler(urlFunc func(r *http.Request) string) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		i1 := promhttp.InstrumentHandlerResponseSize(responseSize, next)
-		i2 := promhttp.InstrumentHandlerCounter(counter, i1)
-		i3 := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			promhttp.InstrumentHandlerDuration(
-				duration.MustCurryWith(prometheus.Labels{"url": urlFunc(r)}), i2)(w, r)
-		})
-		return promhttp.InstrumentHandlerInFlight(inFlightGauge, i3)
-	}
+func InstrumentHandler(urlFunc func(r *http.Request) string) httpe.MiddlewareFunc {
+	chain := httpe.NewMiddlewareChain(
+		func(next http.Handler) http.Handler {
+			return promhttp.InstrumentHandlerResponseSize(responseSize, next)
+		},
+		func(next http.Handler) http.Handler {
+			return promhttp.InstrumentHandlerCounter(counter, next)
+		},
+		func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				promhttp.InstrumentHandlerDuration(
+					duration.MustCurryWith(prometheus.Labels{"url": urlFunc(r)}), next)(w, r)
+			})
+		},
+		func(next http.Handler) http.Handler {
+			return promhttp.InstrumentHandlerInFlight(inFlightGauge, next)
+		},
+	)
+	return chain.Handler
 }
 
 func Handler() http.Handler {
