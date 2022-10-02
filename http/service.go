@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	httpe "github.com/bwilczynski/go-svc/pkg/http"
+	"github.com/bwilczynski/go-svc/pkg/httpe"
 
 	"github.com/rs/zerolog"
 )

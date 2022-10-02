@@ -1,6 +1,6 @@
 package admin
 
-import "github.com/bwilczynski/go-svc/pkg/http/metrics"
+import "github.com/bwilczynski/go-svc/pkg/httpe/metrics"
 
 func (svc service) routes() {
 	svc.mux.Handle("/health", svc.healthHandler())

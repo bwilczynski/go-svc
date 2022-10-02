@@ -3,7 +3,7 @@ package admin
 import (
 	"net/http"
 
-	httpe "github.com/bwilczynski/go-svc/pkg/http"
+	"github.com/bwilczynski/go-svc/pkg/httpe"
 )
 
 func (svc service) healthHandler() http.HandlerFunc {

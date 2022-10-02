@@ -11,7 +11,7 @@ import (
 	"time"
 
 	h "github.com/bwilczynski/go-svc/http"
-	"github.com/bwilczynski/go-svc/http/admin"
+	"github.com/bwilczynski/go-svc/pkg/httpe/admin"
 	"github.com/rs/zerolog"
 )
 

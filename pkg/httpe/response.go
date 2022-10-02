@@ -1,4 +1,4 @@
-package http
+package httpe
 
 import (
 	"encoding/json"
