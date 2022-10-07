@@ -47,7 +47,7 @@ func init() {
 	prometheus.MustRegister(inFlightGauge, counter, duration, responseSize)
 }
 
-func InstrumentHandler(urlFunc func(r *http.Request) string) httpe.MiddlewareFunc {
+func InstrumentHandler(urlFunc func(r *http.Request) string) httpe.MiddlewareFunc[http.Handler] {
 	chain := httpe.NewMiddlewareChain(
 		func(next http.Handler) http.Handler {
 			return promhttp.InstrumentHandlerResponseSize(responseSize, next)
