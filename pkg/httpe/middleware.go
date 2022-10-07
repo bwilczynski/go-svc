@@ -9,24 +9,24 @@ import (
 	"github.com/rs/zerolog/hlog"
 )
 
-type MiddlewareFunc func(http.Handler) http.Handler
+type MiddlewareFunc[T any] func(T) T
 
-type middlewareChain struct {
-	items []MiddlewareFunc
+type middlewareChain[T any] struct {
+	items []MiddlewareFunc[T]
 }
 
-func NewMiddlewareChain(items ...MiddlewareFunc) middlewareChain {
-	return middlewareChain{items: items}
+func NewMiddlewareChain[T any](items ...MiddlewareFunc[T]) middlewareChain[T] {
+	return middlewareChain[T]{items: items}
 }
 
-func (chain middlewareChain) Handler(next http.Handler) http.Handler {
+func (chain middlewareChain[T]) Handler(next T) T {
 	for i := len(chain.items) - 1; i >= 0; i-- {
 		next = chain.items[i](next)
 	}
 	return next
 }
 
-func LoggingHandler(logger zerolog.Logger) MiddlewareFunc {
+func LoggingHandler(logger zerolog.Logger) MiddlewareFunc[http.Handler] {
 	chain := NewMiddlewareChain(
 		hlog.NewHandler(logger),
 		hlog.AccessHandler(func(r *http.Request, status, size int, duration time.Duration) {
