@@ -9,8 +9,10 @@ import (
 )
 
 func (svc service) routes() {
+	transport := LoggingRoundTripper(svc.logger)(http.DefaultTransport)
+
 	svc.handle("/hello", svc.helloHandler())
-	svc.handle("/httpbin/", http.StripPrefix("/httpbin/", svc.httpbinHandler()))
+	svc.handle("/httpbin/", http.StripPrefix("/httpbin/", svc.httpbinHandler(transport)))
 	svc.handle("/", http.NotFoundHandler())
 }
 
