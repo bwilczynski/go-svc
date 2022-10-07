@@ -17,6 +17,7 @@ func (svc service) handle(pattern string, handler http.Handler) {
 	observe := httpe.NewMiddlewareChain(
 		metrics.InstrumentHandler(func(r *http.Request) string { return svc.mux.GetRoutePattern(r) }),
 		httpe.LoggingHandler(svc.logger),
+		httpe.DumpRequestHandler(svc.logger),
 	).Handler
 	svc.mux.Handle(pattern, observe(handler))
 }

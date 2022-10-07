@@ -2,6 +2,7 @@ package httpe
 
 import (
 	"net/http"
+	"net/http/httputil"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -43,4 +44,17 @@ func LoggingHandler(logger zerolog.Logger) MiddlewareFunc {
 		hlog.RequestIDHandler("req_id", "Request-Id"),
 	)
 	return chain.Handler
+}
+
+func DumpRequestHandler(logger zerolog.Logger) MiddlewareFunc {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if logger.Debug().Enabled() {
+				if r, err := httputil.DumpRequest(r, true); err == nil {
+					logger.Debug().Msg(string(r))
+				}
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
