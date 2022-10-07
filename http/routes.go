@@ -10,6 +10,7 @@ import (
 
 func (svc service) routes() {
 	svc.handle("/hello", svc.helloHandler())
+	svc.handle("/httpbin/", http.StripPrefix("/httpbin/", svc.httpbinHandler()))
 	svc.handle("/", http.NotFoundHandler())
 }
 
