@@ -11,6 +11,7 @@ import (
 	"time"
 
 	h "github.com/bwilczynski/go-svc/http"
+	"github.com/bwilczynski/go-svc/pkg/httpe"
 	"github.com/bwilczynski/go-svc/pkg/httpe/admin"
 	"github.com/rs/zerolog"
 )
@@ -46,11 +47,13 @@ func run() error {
 	logger.Info().Msg("Application is starting")
 
 	srv, admin := &http.Server{
-		Addr:    fmt.Sprintf(":%d", *port),
-		Handler: h.NewService(logger),
+		Addr:     fmt.Sprintf(":%d", *port),
+		Handler:  h.NewService(logger),
+		ErrorLog: httpe.NewLogger(logger),
 	}, &http.Server{
-		Addr:    fmt.Sprintf(":%d", *adminPort),
-		Handler: admin.NewService(logger),
+		Addr:     fmt.Sprintf(":%d", *adminPort),
+		Handler:  admin.NewService(logger),
+		ErrorLog: httpe.NewLogger(logger),
 	}
 	go func() {
 		srv.ListenAndServe()
