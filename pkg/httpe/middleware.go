@@ -46,7 +46,7 @@ func LoggingHandler(logger zerolog.Logger) MiddlewareFunc[http.Handler] {
 	return chain.Handler
 }
 
-func DumpRequestHandler(logger zerolog.Logger) MiddlewareFunc {
+func DumpRequestHandler(logger zerolog.Logger) MiddlewareFunc[http.Handler] {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if logger.Debug().Enabled() {
@@ -55,6 +55,25 @@ func DumpRequestHandler(logger zerolog.Logger) MiddlewareFunc {
 				}
 			}
 			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+type RoundTripperFunc func(*http.Request) (*http.Response, error)
+
+func (f RoundTripperFunc) RoundTrip(r *http.Request) (*http.Response, error) {
+	return f(r)
+}
+
+func DumpRequestTransport(logger zerolog.Logger) MiddlewareFunc[http.RoundTripper] {
+	return func(next http.RoundTripper) http.RoundTripper {
+		return RoundTripperFunc(func(r *http.Request) (*http.Response, error) {
+			if logger.Debug().Enabled() {
+				if r, err := httputil.DumpRequest(r, true); err == nil {
+					logger.Debug().Msg(string(r))
+				}
+			}
+			return next.RoundTrip(r)
 		})
 	}
 }

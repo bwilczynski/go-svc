@@ -5,3 +5,7 @@ GET {{baseurl}}/hello
 
 ### /
 GET {{baseurl}}/
+
+### /httpbin/headers
+GET {{baseurl}}/httpbin/headers
+Request-Id: 123
