@@ -9,7 +9,10 @@ import (
 )
 
 func (svc service) routes() {
-	transport := httpe.DumpRequestTransport(svc.logger)(http.DefaultTransport)
+	transport := httpe.NewMiddlewareChain(
+		httpe.LoggingTransport(),
+		httpe.DumpRequestTransport(),
+	).Handler(http.DefaultTransport)
 
 	svc.mux.Handle("/hello", svc.observe(svc.helloHandler()))
 	svc.mux.Handle("/httpbin/", svc.observe(http.StripPrefix("/httpbin/", svc.httpbinHandler(transport))))
@@ -20,6 +23,6 @@ func (svc service) observe(h http.Handler) http.Handler {
 	return httpe.NewMiddlewareChain(
 		metrics.InstrumentHandler(func(r *http.Request) string { return svc.mux.GetRoutePattern(r) }),
 		httpe.LoggingHandler(svc.logger),
-		httpe.DumpRequestHandler(svc.logger),
+		httpe.DumpRequestHandler(),
 	).Handler(h)
 }

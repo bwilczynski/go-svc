@@ -16,6 +16,6 @@ func NewLogger(logger zerolog.Logger) *log.Logger {
 }
 
 func (w zerologWriter) Write(p []byte) (n int, err error) {
-	w.logger.Error().Msgf(strings.TrimSpace(string(p)))
+	w.logger.Error().Msg(strings.TrimSpace(string(p)))
 	return len(p), nil
 }
