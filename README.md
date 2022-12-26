@@ -10,7 +10,8 @@ Template for building services in Go.
 - [x] [Admin endpoints](./pkg/httpe/admin/routes.go) on separate port
 - [x] HTTP [response helpers](./pkg/httpe/response.go)
 - [x] HTTP chainable [middlewares](./pkg/httpe/middleware.go)
-- [ ] Dockerfile and Kubernetes deployments
+- [x] Dockerfile and Kubernetes deployments
+- [x] Local development with [Tilt](https://tilt.dev/) and [Kind](https://kind.sigs.k8s.io/)
 - [ ] Github Actions
 - [ ] Grafana dashboard
 
