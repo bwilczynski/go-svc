@@ -7,7 +7,6 @@ spec:
   selector:
     app: go-svc
   ports:
-    - name: admin
-      port: 5000
     - name: http
       port: 8000
+      targetPort: http

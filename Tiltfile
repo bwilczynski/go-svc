@@ -7,4 +7,4 @@ helm_resource(name='prometheus-stack', chart='prometheus-community/kube-promethe
 
 docker_build('bwilczynski/go-svc', '.', dockerfile='Dockerfile')
 k8s_yaml(kustomize('./deploy/go-svc'))
-k8s_resource('go-svc', port_forwards=8000)
+k8s_resource('go-svc', port_forwards='8000', resource_deps=['prometheus-stack'])
