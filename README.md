@@ -23,3 +23,25 @@ Requests for:
 1. [Admin service](admin.http)
 
 Can be run directly from VS Code using [Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+
+## Kubernetes
+
+Setting up local Kubernetes environment is easy.
+
+Make sure you have [Kind](https://kind.sigs.k8s.io/) installed:
+
+```shell
+brew install kind
+```
+
+Setup local cluster:
+
+```shell
+./hack/kind.sh
+```
+
+Run tilt:
+
+```shell
+tilt up
+```
