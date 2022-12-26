@@ -1,0 +1,12 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: go-svc
+spec:
+  selector:
+    matchLabels:
+      app: go-svc
+  podMetricsEndpoints:
+    - port: admin
+      path: /metrics

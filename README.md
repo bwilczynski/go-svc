@@ -10,7 +10,8 @@ Template for building services in Go.
 - [x] [Admin endpoints](./pkg/httpe/admin/routes.go) on separate port
 - [x] HTTP [response helpers](./pkg/httpe/response.go)
 - [x] HTTP chainable [middlewares](./pkg/httpe/middleware.go)
-- [ ] Dockerfile and Kubernetes deployments
+- [x] Dockerfile and Kubernetes deployments
+- [x] Local development with [Tilt](https://tilt.dev/) and [Kind](https://kind.sigs.k8s.io/)
 - [ ] Github Actions
 - [ ] Grafana dashboard
 
@@ -22,3 +23,25 @@ Requests for:
 1. [Admin service](admin.http)
 
 Can be run directly from VS Code using [Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+
+## Kubernetes
+
+Setting up local Kubernetes environment is easy.
+
+Make sure you have [Kind](https://kind.sigs.k8s.io/) installed:
+
+```shell
+brew install kind
+```
+
+Setup local cluster:
+
+```shell
+./hack/kind.sh
+```
+
+Run tilt:
+
+```shell
+tilt up
+```

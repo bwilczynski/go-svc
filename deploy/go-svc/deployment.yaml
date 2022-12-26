@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-svc
+  labels:
+    app: go-svc
+spec:
+  selector:
+    matchLabels:
+      app: go-svc
+  template:
+    metadata:
+      labels:
+        app: go-svc
+    spec:
+      containers:
+        - name: go-svc
+          image: bwilczynski/go-svc
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
+            limits:
+              cpu: 500m
+              memory: 200Mi
+          ports:
+            - name: http
+              containerPort: 8000
+            - name: admin
+              containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: admin
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: admin
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 20
