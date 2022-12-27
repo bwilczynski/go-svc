@@ -10,3 +10,12 @@ resources:
   - service.yaml
   - ingress.yaml
   - podmonitor.yaml
+
+configMapGenerator:
+  - name: dashboard-go-svc
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+    files:
+      - dashboards/go-svc.json
