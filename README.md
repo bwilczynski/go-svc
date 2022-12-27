@@ -13,7 +13,7 @@ Template for building services in Go.
 - [x] Dockerfile and Kubernetes deployments
 - [x] Local development with [Tilt](https://tilt.dev/) and [Kind](https://kind.sigs.k8s.io/)
 - [ ] Github Actions
-- [ ] Grafana dashboard
+- [x] [Grafana dashboard](./deploy/go-svc/dashboards/go-svc.json) deployed to Grafana from config map
 
 ## Sample requests
 
@@ -40,8 +40,18 @@ Setup local cluster:
 ./hack/kind.sh
 ```
 
-Run tilt:
+Run tilt - this will deploy go-svc along with [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) for monitoring:
 
 ```shell
 tilt up
 ```
+
+## Dashboard
+
+Example dashboard is deployed to Grafana from [config map](./deploy/go-svc/kustomization.yaml).
+
+Traffic stats:
+![go-svc-1.png](deploy/go-svc/dashboards/go-svc-1.png)
+
+Goroutine & memory stats:
+![go-svc-2.png](deploy/go-svc/dashboards/go-svc-2.png)
